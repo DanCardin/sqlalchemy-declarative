@@ -1,0 +1,40 @@
+[tool.poetry]
+name = "sqlalchemy-declarative"
+version = "0.1.0"
+description = ""
+authors = []
+packages = [
+    { include = "sqlalchemy_declarative", from = "src" },
+]
+
+[tool.poetry.dependencies]
+python = ">=3.5"
+
+alembic = ">=1.0"
+
+[tool.poetry.dev-dependencies]
+black = {version = "=>19.3b0", allows-prereleases = true, python = ">=3.6"}
+attrs = "*"
+pytest = "*"
+mypy = "*"
+flake8 = "*"
+isort = "*"
+pydocstyle = ">=4.0.0"
+pytest-cov = "*"
+sqlalchemy-stubs = "*"
+psycopg2 = {version = "*"}
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
+
+[tool.isort]
+default_section = 'FIRSTPARTY'
+include_trailing_comma = true
+indent = '    '
+length_sort = false
+line_length = 88
+multi_line_output = 3
+order_by_type = false
+known_first_party = 'tests'
+use_parentheses = true
