@@ -1,28 +1,53 @@
 from sqlalchemy.ext.declarative import as_declarative
+from sqlalchemy_declarative_metadata import (
+    declarative_schema,
+    Role,
+    Roles,
+    Schemas,
+    Privilege,
+    Privileges,
+)
+from pytest_mock_resources import create_postgres_fixture
 
-
-def declarative_schema(cls):
-    cls.metadata.info["roles"] = cls.roles
-    cls.metadata.info["schemas"] = cls.schemas
-    return cls
+pg = create_postgres_fixture()
 
 
 @declarative_schema
 @as_declarative()
 class Base:
-    roles = ("app", "analyst", "operator")
-    schemas = {
-        "example": {
-            "SELECT": ("app", "analyst"),
-            "INSERT": ("app",),
-            "UPDATE": ("app",),
-            "DELETE": ("app",),
-        },
-        "analysis": {
-            "SELECT": ("analyst",),
-            "INSERT": ("analyst",),
-            "UPDATE": ("analyst",),
-            "DELETE": ("analyst",),
-        },
-        "sandbox": {"ALL": ("analysis",)},
-    }
+    schemas = Schemas.options(ignore_unspecified=True).schemas(
+        "example", "analysis", "sandbox"
+    )
+    roles = Roles.options(ignore_unspecified=True).roles(
+        Role(
+            "app",
+            privileges=Privileges.options().privileges(
+                Privilege(
+                    schemas=["example", "analysis", "sandbox"],
+                    schema=["CREATE"],
+                    tables=["ALL"],
+                )
+            ),
+        ),
+        Role(
+            "analyst",
+            privileges=Privileges.options().privileges(
+                Privilege(schemas=["example"], select=True),
+                Privilege(
+                    schemas=["analysis"],
+                    schema=[""],
+                    select=True,
+                    insert=True,
+                    update=True,
+                    delete=True,
+                    default=True,
+                ),
+                Privilege(schema="sandbox", all=True, default=True),
+            ),
+        ),
+        Role("foo", in_roles=["analyst"]),
+    )
+
+
+def test_generate():
+    pass
