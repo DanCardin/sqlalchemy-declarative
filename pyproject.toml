@@ -4,7 +4,7 @@ version = "0.1.0"
 description = ""
 authors = []
 packages = [
-    { include = "sqlalchemy_declarative", from = "src" },
+    { include = "sqlalchemy_declarative_database", from = "src" },
 ]
 
 [tool.poetry.dependencies]
@@ -13,7 +13,7 @@ python = ">=3.5"
 alembic = ">=1.0"
 
 [tool.poetry.dev-dependencies]
-black = {version = "=>19.3b0", allows-prereleases = true, python = ">=3.6"}
+black = {version = "=>19.3b0", allow-prereleases = true, python = ">=3.6"}
 attrs = "*"
 pytest = "*"
 mypy = "*"
@@ -22,6 +22,7 @@ isort = "*"
 pydocstyle = ">=4.0.0"
 pytest-cov = "*"
 sqlalchemy-stubs = "*"
+pytest_mock_resources = "*"
 psycopg2 = {version = "*"}
 
 [build-system]

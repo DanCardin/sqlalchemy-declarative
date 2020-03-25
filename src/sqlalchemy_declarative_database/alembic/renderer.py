@@ -1,5 +1,5 @@
 from alembic.autogenerate import renderers
-from sqlalchemy_declarative_metadata.alembic.operation import (
+from sqlalchemy_declarative_database.alembic.operation import (
     CreateSchemaOp,
     DropSchemaOp,
     CreateRoleOp,

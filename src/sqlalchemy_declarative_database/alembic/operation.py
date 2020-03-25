@@ -1,5 +1,5 @@
 from alembic.operations import MigrateOperation, Operations
-from sqlalchemy_declarative_metadata.types import Schema, Role
+from sqlalchemy_declarative_database.types import Schema, Role
 
 
 class GenericOp(MigrateOperation):

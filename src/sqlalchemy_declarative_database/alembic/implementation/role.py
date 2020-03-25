@@ -1,7 +1,7 @@
 from alembic.operations import Operations
 from datetime import datetime
-from sqlalchemy_declarative_metadata.alembic.base import conditional_option
-from sqlalchemy_declarative_metadata.alembic.operation import (
+from sqlalchemy_declarative_database.alembic.base import conditional_option
+from sqlalchemy_declarative_database.alembic.operation import (
     CreateRoleOp,
     DropRoleOp,
 )

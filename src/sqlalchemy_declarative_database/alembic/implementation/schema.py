@@ -1,6 +1,6 @@
 from alembic.operations import Operations
 from sqlalchemy.schema import CreateSchema, DropSchema
-from sqlalchemy_declarative_metadata.alembic.operation import (
+from sqlalchemy_declarative_database.alembic.operation import (
     CreateSchemaOp,
     DropSchemaOp,
 )

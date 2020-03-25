@@ -17,11 +17,15 @@ class Schemas:
     def options(cls, ignore_unspecified=False):
         return cls(ignore_unspecified=ignore_unspecified)
 
-    def schemas(self, schemas: List[Union[Schema, str]]):
+    def __iter__(self):
+        for schema in self.schemas:
+            yield schema
+
+    def are(self, *schemas: List[Union[Schema, str]]):
         cls = self.__class__
         return cls(
             schemas=[
-                schema if isinstance(schema, cls) else Schema(schema)
+                schema if isinstance(schema, Schema) else Schema(schema)
                 for schema in schemas
             ],
             ignore_unspecified=self.ignore_unspecified,

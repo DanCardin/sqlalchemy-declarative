@@ -1,5 +1,5 @@
 from sqlalchemy.ext.declarative import as_declarative
-from sqlalchemy_declarative_metadata import (
+from sqlalchemy_declarative_database import (
     declarative_schema,
     Role,
     Roles,
@@ -15,7 +15,7 @@ pg = create_postgres_fixture()
 @declarative_schema
 @as_declarative()
 class Base:
-    schemas = Schemas.options(ignore_unspecified=True).schemas(
+    schemas = Schemas.options(ignore_unspecified=True).are(
         "example", "analysis", "sandbox"
     )
     roles = Roles.options(ignore_unspecified=True).roles(

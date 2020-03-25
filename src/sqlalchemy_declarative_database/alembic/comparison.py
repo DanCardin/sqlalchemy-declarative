@@ -1,5 +1,5 @@
 from alembic.autogenerate import comparators
-from sqlalchemy_declarative_metadata.alembic.operation import (
+from sqlalchemy_declarative_database.alembic.operation import (
     CreateSchemaOp,
     DropSchemaOp,
     CreateRoleOp,
@@ -23,6 +23,9 @@ def compare_schemas(autogen_context, upgrade_ops, schemas):
     expected_schemas = set(schemas.schemas)
     new_schemas = expected_schemas - existing_schemas
     removed_schemas = existing_schemas - expected_schemas
+    dd
+
+    asdf
 
     for schema in sorted(new_schemas):
         upgrade_ops.ops.insert(0, CreateSchemaOp(schema))
