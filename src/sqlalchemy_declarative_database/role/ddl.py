@@ -1,16 +1,48 @@
-from alembic.operations import Operations
+from sqlalchemy_declarative_database.role import Role
 from datetime import datetime
-from sqlalchemy_declarative_database.alembic.base import conditional_option
-from sqlalchemy_declarative_database.alembic.operation import (
-    CreateRoleOp,
-    DropRoleOp,
-)
+from sqlalchemy.schema import DDL
+from sqlalchemy.sql import text
 
 
-@Operations.implementation_for(CreateRoleOp)
-def create_role(operations, operation):
-    role = operation
+def role_ddl(role: Role):
+    ddl = DDL(postgres_render_create_role(role))
+    return ddl.execute_if(callable_=check_role, state=role)
 
+
+def postgres_identify_existing_roles(conn):
+    select_roles = "SELECT rolname FROM pg_roles"
+    return {
+        role
+        for role, *_ in conn.execute(select_roles).fetchall()
+        if not role.startswith("pg_")
+    }
+
+
+def check_role(ddl, target, connection, state, **_):
+    dialect = connection.dialect.name
+    if dialect == "postgresql":
+        roles = postgres_identify_existing_roles(connection)
+
+    elif "sqlite" in dialect:
+        # This is pretty jank, but it seems like there's not a way to do this with `CreateSchema`
+        # without first registering it on the dialect, which we cannot do.
+        schema_exists = "ATTACH DATABASE ':memory:' AS :schema"
+        connection.execute(schema_exists, schema=ddl.element)
+        return False
+    else:
+        raise NotImplementedError()
+
+    role = state
+    return role.name not in roles
+
+
+def conditional_option(option, condition):
+    if not option:
+        option = "NO{segment}"
+    return option
+
+
+def postgres_render_create_role(role: Role):
     segments = ["CREATE ROLE", role.name]
     if role.has_option:
         segments.append("WITH")
@@ -56,8 +88,8 @@ def create_role(operations, operation):
         segments.append(segment)
 
     if role.valid_until is not None:
-        timestamp = datetime.timestamp(role.valid_until)
-        segment = f"VALID UNTIL {timestamp}"
+        timestamp = role.valid_until.isoformat()
+        segment = f"VALID UNTIL '{timestamp}'"
         segments.append(segment)
 
     if role.in_roles is not None:
@@ -76,12 +108,8 @@ def create_role(operations, operation):
         segments.append(segment)
 
     command = " ".join(segments)
-    operations.execute(command)
+    return command
 
 
-@Operations.implementation_for(DropRoleOp)
-def drop_role(operations, operation):
-    role = operation
-
-    command = f"DROP ROLE {role.name}"
-    operations.execute(command)
+def postgres_render_drop_role(role: Role):
+    return f"DROP ROLE {role.name}"

@@ -3,36 +3,7 @@ from datetime import datetime
 from typing import Optional, List, Union, Tuple
 
 
-@dataclass
-class Schema:
-    name: str
-
-
-@dataclass
-class Schemas:
-    schemas: List[Schema] = field(default_factory=list)
-    ignore_unspecified: bool = False
-
-    @classmethod
-    def options(cls, ignore_unspecified=False):
-        return cls(ignore_unspecified=ignore_unspecified)
-
-    def __iter__(self):
-        for schema in self.schemas:
-            yield schema
-
-    def are(self, *schemas: List[Union[Schema, str]]):
-        cls = self.__class__
-        return cls(
-            schemas=[
-                schema if isinstance(schema, Schema) else Schema(schema)
-                for schema in schemas
-            ],
-            ignore_unspecified=self.ignore_unspecified,
-        )
-
-
-@dataclass
+@dataclass(frozen=True)
 class Role:
     """
     postgres: https://www.postgresql.org/docs/current/sql-createrole.html
@@ -75,7 +46,7 @@ class Role:
             yield f.name, value
 
 
-@dataclass
+@dataclass(frozen=True)
 class User(Role):
     pass
 
@@ -89,9 +60,13 @@ class Roles:
     def options(cls, ignore_unspecified=False):
         return cls(ignore_unspecified=ignore_unspecified)
 
-    def roles(self, *roles: Tuple[Union[Role, str]]):
+    def __iter__(self):
+        for role in self.roles:
+            yield role
+
+    def are(self, *roles: Tuple[Union[Role, str]]):
         cls = self.__class__
         return cls(
-            roles=[role if isinstance(role, cls) else Role(role) for role in roles],
+            roles=[role if isinstance(role, Role) else Role(role) for role in roles],
             ignore_unspecified=self.ignore_unspecified,
         )

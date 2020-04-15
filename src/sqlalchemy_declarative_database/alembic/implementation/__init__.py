@@ -1,1 +1,0 @@
-from sqlalchemy_declarative_database.alembic.base import conditional_option

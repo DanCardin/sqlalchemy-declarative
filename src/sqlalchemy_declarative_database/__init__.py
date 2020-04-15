@@ -1,10 +1,8 @@
 # flake8: noqa
 from dataclasses import dataclass
-from sqlalchemy_declarative_database.types import (
-    Role,
-    Roles,
-    Schemas,
-)
+
+from sqlalchemy_declarative_database.role import Role, Roles
+from sqlalchemy_declarative_database.schema import Schema, Schemas
 from sqlalchemy_declarative_database.sqlalchemy import listen
 
 

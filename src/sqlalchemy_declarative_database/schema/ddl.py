@@ -1,5 +1,5 @@
 from sqlalchemy.schema import CreateSchema
-from sqlalchemy_declarative_database.types import Schema
+from sqlalchemy_declarative_database.schema import Schema
 from sqlalchemy.sql import text
 
 
