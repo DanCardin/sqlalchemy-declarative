@@ -1,5 +1,6 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import List, Union
+from sqlalchemy_declarative_database.functools import maybe_classmethod
 
 
 @dataclass
@@ -12,20 +13,20 @@ class Schemas:
     schemas: List[Schema] = field(default_factory=list)
     ignore_unspecified: bool = False
 
-    @classmethod
-    def options(cls, ignore_unspecified=False):
-        return cls(ignore_unspecified=ignore_unspecified)
+    @maybe_classmethod
+    def options(self, ignore_unspecified=False):
+        return replace(self, ignore_unspecified=ignore_unspecified)
 
-    def __iter__(self):
-        for schema in self.schemas:
-            yield schema
-
+    @maybe_classmethod()
     def are(self, *schemas: List[Union[Schema, str]]):
-        cls = self.__class__
-        return cls(
+        return replace(
+            self,
             schemas=[
                 schema if isinstance(schema, Schema) else Schema(schema)
                 for schema in schemas
             ],
-            ignore_unspecified=self.ignore_unspecified,
         )
+
+    def __iter__(self):
+        for schema in self.schemas:
+            yield schema
